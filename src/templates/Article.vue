@@ -25,9 +25,7 @@
     <article class="mb-4">
       <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
-          <div class="col-md-10 col-lg-8 col-xl-7">
-            {{$page.article.body}}
-          </div>
+          <div class="col-md-10 col-lg-8 col-xl-7" v-html="content"></div>
         </div>
       </div>
     </article>
@@ -47,7 +45,18 @@ query($id:ID!){
 }
 </page-query>
 <script>
-export default {};
+import MarkdownIt from 'markdown-it'
+const md = new MarkdownIt({breaks:true,replaceLink:(link,env)=>{
+  return process.env.GRIDSOME_API_URL+link
+}}).use(require('markdown-it-replace-link'));
+export default {
+  name:"Article",
+  computed:{
+    content(){
+      return md.render(this.$page.article.body)
+    }
+  }
+};
 </script>
 
 <style>
